@@ -1,0 +1,9 @@
+class CfgSounds
+{
+	#include "Scarab_Main\Scarab_Sounds\Scarab_Sounds.hpp"
+};
+
+class CfgFunctions
+{
+   #include "Scarab_Main\Scarab_Server_Functions\Scarab_Server_Functions.hpp"
+};
