@@ -42,12 +42,14 @@ _object67 setPosASL [1.83513,61.0255,5.09753];
 
 _segment_obj enableSimulationGlobal true;
 
+_Locality = _legBase getVariable "Locality"; 
+
 if !(_scarab_legs_invincible) then {	
 	{
 		[_x, ["HitPart", {
 			(_this select 0) params ["_target", "_shooter", "_projectile", "_position", "_velocity", "_selection", "_ammo", "_vector", "_radius", "_surfaceType", "_isDirect"];
 			[_target, _shooter, _projectile, _position, _velocity, _selection, _ammo, _vector, _radius, _surfaceType, _isDirect] remoteExec ["scarab_fnc_legDamaged", 2];
-		}]] remoteExec ["addEventHandler", 0];
+		}]] remoteExec ["addEventHandler", _Locality];
 		_x setVariable ["EH_Leg_Obj", true]; 
 		_x setVariable ["Hit_In_Progress", false];
 	} forEach [_segment_obj, _object61, _object62, _object63, _object64, _object65, _object66, _object67];

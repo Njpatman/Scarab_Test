@@ -42,11 +42,10 @@ _AI_target_obj_array = [];
 		_pointobj_dmg attachTo [_x,[0,0,0]]; 
 		_pointobj_dmg setVariable ["Leg_Base", _base];
 		_pointobj_dmg enableSimulationGlobal false;
-		_pointobj_dmg setObjectScale 0.05;
 		_points_dmg pushBack _pointobj_dmg;
 	};	
 
-	if (_x isEqualTo "Land_Cargo20_blue_F") then {
+	if (typeOf _x isEqualTo "Land_Cargo20_grey_F") then {
 		_x attachto [_points#_forEachindex, [0, 10, 0]]; 
 		for "_e" from 0 to 1 do { 
 			_AI_target_attach_array = [0,0,0];
@@ -56,18 +55,17 @@ _AI_target_obj_array = [];
 				_AI_target_obj = _x createVehicle [0,0,0];
 				_AI_target_obj allowCrewInImmobile [true, true];
 				switch (_e) do {
-					case 0: {_AI_target_attach_array = [0,-1.65,-1];};
-					case 1: {_AI_target_attach_array = [0,1.65,-1];};
+					case 0: {_AI_target_attach_array = [0,-1.45,-1];};
+					case 1: {_AI_target_attach_array = [0,1.45,-1];};
 				};
 				_AI_target_obj attachTo [_obj, _AI_target_attach_array];
 				_AI_target_obj_array pushBack _AI_target_obj;
 				_AI_target_obj allowDamage false;
-				_AI_target_obj enableSimulationGlobal false;
-				//_AI_target_obj setObjectScale 0.5;
+				_AI_target_obj enableSimulationGlobal true;
 				_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
 				waitUntil {!isNull _man};
 				_man moveInAny _AI_target_obj;
-				uiSleep 0.1;
+				uiSleep 0.185;
 				{ 
 					_x removeCuratorEditableObjects [[_AI_target_obj], true];
 				} forEach (allCurators); 
@@ -76,32 +74,25 @@ _AI_target_obj_array = [];
 		_x setDir 90; 
 	} else {
 		_x attachto [_points#_forEachindex, [0, 18, 0]]; 
-		for "_e" from 0 to 2 do { 
-			_AI_target_attach_array = [0,0,0];
-			_AI_target_array = _AI_targets select 0;
-			_obj = _x;
-			{
-				_AI_target_obj = _x createVehicle [0,0,0];
-				_AI_target_obj allowCrewInImmobile [true, true];
-				switch (_e) do {
-					case 0: {_AI_target_attach_array = [0,1.75,0];};
-					case 1: {_AI_target_attach_array = [0,-1.75,0];};
-					case 2: {_AI_target_attach_array = [0,0,5];};
-				};
-				_AI_target_obj attachTo [_obj, _AI_target_attach_array];
-				_AI_target_obj_array pushBack _AI_target_obj;
-				_AI_target_obj allowDamage false;
-				_AI_target_obj enableSimulationGlobal false;
-				//_AI_target_obj setObjectScale 0.5;
-				_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
-				waitUntil {!isNull _man};
-				_man moveInAny _AI_target_obj;
-				uiSleep 0.1;
-				{ 
-					_x removeCuratorEditableObjects [[_AI_target_obj, _man], true];
-				} forEach (allCurators); 
-			} forEach _AI_target_array;
-		};
+		_AI_target_attach_array = [0,0,0];
+		_AI_target_array = _AI_targets select 0;
+		_obj = _x;
+		{
+			_AI_target_obj = _x createVehicle [0,0,0];
+			_AI_target_obj allowCrewInImmobile [true, true];
+			_AI_target_attach_array = [0,0,4.65];
+			_AI_target_obj attachTo [_obj, _AI_target_attach_array];
+			_AI_target_obj_array pushBack _AI_target_obj;
+			_AI_target_obj allowDamage false;
+			_AI_target_obj enableSimulationGlobal true;
+			_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
+			waitUntil {!isNull _man};
+			_man moveInAny _AI_target_obj;
+			uiSleep 0.185;
+			{ 
+				_x removeCuratorEditableObjects [[_AI_target_obj, _man], true];
+			} forEach (allCurators); 
+		} forEach _AI_target_array;
 		_x setDir 270; 
 	};
 } forEach _segments;
@@ -141,5 +132,5 @@ _handle = [{
 	private _points = _base getVariable "Scarab_points"; 
 	private _target = _base getVariable "Scarab_target"; 
 	[_base, ASLtoAGL (getPosASL _target), _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations] call Scarab_fnc_moveLeg; 
-}, 0, [_base, _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations]] call CBA_fnc_addPerFrameHandler; 
+}, 0.04, [_base, _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations]] call CBA_fnc_addPerFrameHandler; 
 _base setVariable ["Scarab_handle", _handle]; 

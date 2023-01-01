@@ -125,12 +125,14 @@ _object27 setPosASL [9.78794,47.887,-183.41];
 _object27 setVectorDirAndUp [[-0.00977699,0.664504,-0.747221],[-0.00679652,0.747195,0.66457]];
 [_object27, _segment_obj] call BIS_fnc_attachToRelative;
 
+_Locality = _legBase getVariable "Locality"; 
+
 if !(_scarab_legs_invincible) then {	
 	{
 		[_x, ["HitPart", {
 			(_this select 0) params ["_target", "_shooter", "_projectile", "_position", "_velocity", "_selection", "_ammo", "_vector", "_radius", "_surfaceType", "_isDirect"];
 			[_target, _shooter, _projectile, _position, _velocity, _selection, _ammo, _vector, _radius, _surfaceType, _isDirect] remoteExec ["scarab_fnc_legDamaged", 2];
-		}]] remoteExec ["addEventHandler", 0];
+		}]] remoteExec ["addEventHandler", _Locality];
 		_x setVariable ["EH_Leg_Obj", true];
 		_x setVariable ["Hit_In_Progress", false];  
 	} forEach [_segment_obj, _object3, _object4, _object5, _object6, _object7, _object9, _object10, _object11, _object12, _object13, _object14, _object15, _object16, _object17, _object18, _object19, _object20, _object21, _object22, _object23, _object24, _object25, _object26, _object27];

@@ -10,7 +10,8 @@ params
 	"_scarab_weapons_invincible",
 	"_scarab_legs_invincible",
 	"_scarab_version",
-	"_scarab_leg_health"
+	"_scarab_leg_health",
+	"_scarab_legs_force_server"
 ];
 _isScarabInProgress = missionNamespace getVariable ["scarabInProgress", false];
 if (_isScarabInProgress) then {
@@ -57,7 +58,7 @@ for "_e" from 0 to ((count _scarab_side) - 1) do {
 
 _scarab_num_of_legs = 2;
 _grp = createGroup (_AI_targets select 1);  
-_scarab_arm_length = 32;   
+_scarab_arm_length = 28;   
 _scarab_num_segments = 2;   
 _scarab_point_max_rot_speed = (360/192) * (_scarab_overall_speed / (_scarab_num_segments)); 
 _scarab_total_leg_length = _scarab_arm_length * _scarab_num_segments;     
@@ -68,8 +69,8 @@ _scarab_walk_height = 25;
 if !(_scarab_orbital_drop) then {_scarab_orbital_drop_H = _scarab_walk_height};
 _scarab_leg_neutral_position = [-28, 42, 0.885 * _scarab_walk_height];   
 _scarab_leg_active_position = [-28, 42, 0];   
-_scarab_rear_leg_neutral_position = [26, 36, 0.885 * _scarab_walk_height];   
-_scarab_rear_leg_active_position = [26, 36, 0];   
+_scarab_rear_leg_neutral_position = [26, 40, 0.885 * _scarab_walk_height];   
+_scarab_rear_leg_active_position = [26, 40, 0];   
 if (_scarab_version isEqualTo "T-74") then {
 	_scarab_rear_leg_neutral_position = [28, 42, 0.885 * _scarab_walk_height];   
 	_scarab_rear_leg_active_position = [28, 42, 0];   
@@ -107,30 +108,34 @@ _core setVariable ["Scarab_handles", _handles];
 _core setVariable ["Scarab_objects", _objects]; 
 _core setVariable ["Scarab_phase", 0]; 
 _core setVariable ["scarab_variation", -2.5]; 
+_core setVariable ["scarab_Legs_invincible", false]; 
 _core setVariable ["scarab_variation_bool", true]; 
 _core setVariable ["Scarab_nextUpdate", time + 5];
-_core setVariable ["Boarding_Phase", false]; 
+_core setVariable ["Walking_Phase", "N/A"]; 
 private _legs = []; 
 _turret_array = [];
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_objectScaleArray = [_scarab_version] call Scarab_fnc_spawnScarabBody;
+_objectScaleArray = [];
+if !(_scarab_version isEqualTo "No Body (Testing ONLY)") then {
+	_objectScaleArray = [_scarab_version] call Scarab_fnc_spawnScarabBody;
+};
 _core_embed = createVehicle ["Land_ButaneCanister_F", [28.117, 79.205, 132.194], [], 0, "NONE"]; 
 _core_embed attachTo [_core, [0,-20,0]];
 _core_embed hideObjectGlobal true;
 _Main_Body = nearestObjects [_core_embed, [], 150];
-_turret_array = nearestObjects [_core_embed, ["OPTRE_FC_T26_AT_IND", "OPTRE_FC_T56_AAG", "OPTRE_FC_T26_AI", "OPTRE_FC_T29B_NVar"], 150];
+_turret_array = nearestObjects [_core_embed, ["OPTRE_FC_T26_AT_IND", "OPTRE_FC_T56_AAG", "OPTRE_FC_T26_AI", "OPTRE_FC_T29B_NVar", "OPTRE_FC_TyrantAA"], 150];
 {
 	[_x, _core_embed] call BIS_fnc_attachToRelative;
 	if (_x != _core) then {
-		_x enableSimulationGlobal true;
+		_x enableSimulationGlobal false;
 	};
-	uiSleep 0.0005;
 } forEach _Main_Body;
 
 if (_scarab_weapons_enabled) then {
 	{
 		_x allowCrewInImmobile [true, true];
+		_x enableSimulationGlobal true;
 		_Gunner = _grp createUnit [(_AI_targets select 2), _core, [], 0, "NONE"];
 		_Gunner forceAddUniform "OPTRE_FC_Elite_CombatSkin";
 		_Gunner addVest "OPTRE_FC_Elite_Armor_Minor";
@@ -165,6 +170,10 @@ for "_i" from 0 to ((count _objectScaleArray) - 1) do {
 	};
 	uiSleep 0.05;
 };
+
+{
+	_x enableSimulationGlobal true;
+} forEach _turret_array;
 
 _core_embed_Dir = getDir _core_embed;
 _core_embed setDir _core_embed_Dir;
@@ -201,6 +210,10 @@ for "_pair" from 1 to _scarab_num_of_legs do {
 		_legBase setVariable ["destroyed", false]; 
 		_legBase setVariable ["Hit_In_Progress", false]; 
 		_legBase setVariable ["Leg_Health", _scarab_leg_health]; 
+		_legBase setVariable ["Locality", 0]; 
+		if (_scarab_legs_force_server) then {
+			_legBase setVariable ["Locality", 2]; 
+		};
 		private _legTarget = "Land_HelipadEmpty_F" createvehicle [0, 0, 0];
 		_legTarget setVariable ["destroyed", false]; 
 		private _legTargetPos = _legBase modelToWorldWorld [0, 3 * _scarab_total_leg_length, 3 * _scarab_total_leg_length]; 
@@ -253,45 +266,16 @@ _core enableSimulationGlobal true;
 
 if (_scarab_orbital_drop) then {
 
-	private _handle_init = [{ 
-	params ["_args", "_handle"]; 
-		_args params 
-		[
-			"_core", 
-			"_scarab_num_segments", 
-			"_scarab_leg_neutral_position",  
-			"_scarab_minimum_distance", 
-			"_scarab_leg_sleep", 
-			"_scarab_leg_active_position",
-			"_scarab_rear_leg_neutral_position",
-			"_scarab_rear_leg_active_position"
-		];
-
-		[	
-			_core,  
-			_scarab_num_segments, 
-			_scarab_leg_neutral_position,  
-			_scarab_minimum_distance,   
-			_scarab_leg_sleep, 
-			_scarab_leg_active_position,
-			_scarab_rear_leg_neutral_position,
-			_scarab_rear_leg_active_position
-		] call scarab_fnc_handleLegUpdate; 
-
-
-	}, 0, [		
-		_core, 
-		_scarab_num_segments, 
-		_scarab_leg_neutral_position,  
-		_scarab_minimum_distance, 
-		_scarab_leg_sleep, 
-		_scarab_leg_active_position,
-		_scarab_rear_leg_neutral_position,
-		_scarab_rear_leg_active_position
-	]] call CBA_fnc_addPerFrameHandler; 
+	{ 
+		[_x, false, _scarab_rear_leg_active_position, _scarab_num_segments, _scarab_minimum_distance, _scarab_leg_sleep] call scarab_fnc_placeLegGroup; 
+	} forEach [_legGroup select 0,_legGroup select 1]; 
+	{ 
+		[_x, false, _scarab_leg_active_position, _scarab_num_segments, _scarab_minimum_distance, _scarab_leg_sleep] call scarab_fnc_placeLegGroup; 
+	} forEach [_legGroup select 2,_legGroup select 3]; 
 
 	_effect_source = "Land_Sack_F" createVehicle [0,0,0];
-	_effect_source attachTo [_core_embed, [0,0, 0]];
+	hideObjectGlobal _effect_source;
+	_effect_source attachTo [_core_embed, [0,0,0]];
 	_particle_emitter_1 = "#particlesource" createVehicle [0,0,0];
 	_particle_emitter_1 attachTo [_core_embed,[15,-15,0]];
 	_particle_emitter_2 = "#particlesource" createVehicle [0,0,0];
@@ -318,34 +302,45 @@ if (_scarab_orbital_drop) then {
 	};
 
 	{
-		[_x, [["\A3\data_f\ParticleEffects\Universal\Universal_02.p3d",8,0,40,1],"","Billboard",1,4,[0,0,0],[0,0,(-200 + (velocity _core select 2))],0,-24,0.04,0.05,[2,60],[[0.35,0.35,0.35,0.6],[0.35,0.35,0.35,0.75],[0.35,0.35,0.35,0.45],[0.42,0.42,0.42,0.28],[0.42,0.42,0.42,0.16],[0.42,0.42,0.42,0.09],[0.42,0.42,0.42,0.06],[0.5,0.5,0.5,0.02],[0.5,0.5,0.5,0]],[1,0.55,0.35],0.3,0.2,"","",_x,0,false,0.01,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
-		[_x, [4,[0.15,0.15,0.15],[0,0,0],0.5,0,[0,0,0,0.06],0,0,0.5,0]] remoteExec ["setParticleRandom", 0];
+		[_x, [["\A3\data_f\ParticleEffects\Universal\Universal_02.p3d",8,0,40,1],"","Billboard",1,3.5,[0,0,0],[0,0,(-200 + (velocity _core select 2))],0,-24,0.04,0.05,[2,60],[[0.35,0.35,0.35,0.6],[0.35,0.35,0.35,0.75],[0.35,0.35,0.35,0.45],[0.42,0.42,0.42,0.28],[0.42,0.42,0.42,0.16],[0.42,0.42,0.42,0.09],[0.42,0.42,0.42,0.06],[0.5,0.5,0.5,0.02],[0.5,0.5,0.5,0]],[1,0.55,0.35],0.3,0.2,"","",_x,0,false,0.01,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
+		[_x, [3.5,[0.15,0.15,0.15],[0,0,0],0.5,0,[0,0,0,0.06],0,0,0.5,0]] remoteExec ["setParticleRandom", 0];
 		[_x, [5,[0,0,0]]] remoteExec ["setParticleCircle", 0];
-		[_x, 0.01] remoteExec ["setDropInterval", 0];
+		[_x, 0.05] remoteExec ["setDropInterval", 0];
 	} forEach [_particle_emitter_1, _particle_emitter_2, _particle_emitter_3, _particle_emitter_4];
 
 	{
-		[_x, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,2,80,1],"","Billboard",1,4,[0,0,0],[0,0,(-200 + (velocity _core select 2))],0,-24,2,0.1,[5,8],[[0.601164,0.0550599,0.593473,-20],[0.912675,0.0435223,0.893446,-15],[0.735767,0.0512138,0.785763,-10],[0.493481,0,0.804992,-6],[0.574244,0,1,-2]],[0.25],0.2,0.1,"","",_x,0,false,0.01,[[0.593473,0,0.647314,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
-		[_x, [4,[0.15,0.15,0.15],[0,0,0],0.5,0,[0,0,0,0.06],0,0,0.5,0]] remoteExec ["setParticleRandom", 0];
-		[_x, [8,[0,0,0]]] remoteExec ["setParticleCircle", 0];
-		[_x, 0.005] remoteExec ["setDropInterval", 0];
+		[_x, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,2,80,1],"","Billboard",1,3,[0,0,0],[0,0,(-200 + (velocity _core select 2))],0,-24,2,0.1,[5,8],[[0.601164,0.0550599,0.593473,-20],[0.912675,0.0435223,0.893446,-15],[0.735767,0.0512138,0.785763,-10],[0.493481,0,0.804992,-6],[0.574244,0,1,-2]],[0.25],0.2,0.1,"","",_x,0,false,0.01,[[0.593473,0,0.647314,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
+		[_x, [3.5,[0.15,0.15,0.15],[0,0,0],0.5,0,[0,0,0,0.06],0,0,0.5,0]] remoteExec ["setParticleRandom", 0];
+		[_x, [5,[0,0,0]]] remoteExec ["setParticleCircle", 0];
+		[_x, 0.05] remoteExec ["setDropInterval", 0];
 	} forEach [_particle_emitter_5, _particle_emitter_6, _particle_emitter_7, _particle_emitter_8];
 
-	waitUntil {((getPosATL _core) select 2) < _scarab_walk_height +  100};
+	waitUntil { uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height +  100};
 
 	[2] remoteExec ["BIS_fnc_earthquake", 0];
 
-	waitUntil {((getPosATL _core) select 2) < _scarab_walk_height +  85};
+	waitUntil { uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height +  85};
+	_pos = getPosATL _core;
+	_pos set [2, 0];
+	_wave_dirt = "#particlesource" createVehicle _pos;
 
-	[(getPosATL _effect_source)] remoteExec ["scarab_fnc_orbitalDrop", 0];
+	[_wave_dirt, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,12,9,0],"","Billboard",1,16,[0,0,0],[0,0,22],0,50,0.01,0,[8,8],[[0.2,0.2,0.2,1],[0.2,0.2,0.2,0]],[1000],0,0,"","",_wave_dirt,0,false,0.1,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
+	[_wave_dirt, [0.5,[0.1,0.1,0],[2,2,7],20,1,[0.1,0.1,0.1,0.1],0,0,1,0]] remoteExec ["setParticleRandom", 0];
+	[_wave_dirt, [25,[25,25,1]]] remoteExec ["setParticleCircle", 0];
+	[_wave_dirt, 0.005] remoteExec ["setDropInterval", 0];
+
+	[_wave_dirt] spawn {
+		params ["_wave_dirt"];
+		uiSleep 4;
+		deleteVehicle _wave_dirt;
+	};
 
 	[_effect_source, ["Initial_Impact", 8500]] remoteExec ["say3D", 0];
 
-	waitUntil {((getPosATL _core) select 2) < _scarab_walk_height};
+	waitUntil {uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height};
 
 	{ deleteVehicle _x; } forEach [_particle_emitter_1, _particle_emitter_2, _particle_emitter_3, _particle_emitter_4, _particle_emitter_5, _particle_emitter_6, _particle_emitter_7, _particle_emitter_8];
 	
-	_handle_init call CBA_fnc_removePerFrameHandler;
 	[_effect_source] spawn {
 		params ["_effect_source"];
 		uiSleep 3.5;
@@ -390,7 +385,7 @@ private _handle = [{
 		_scarab_rear_leg_active_position
 	] call scarab_fnc_handleLegUpdate; 
 
-}, 0.0005, [		
+}, 0.0385 , [		
 	_core, 
 	_scarab_num_segments, 
 	_scarab_walk_height, 
@@ -429,9 +424,6 @@ uiSleep 8;
 		uiSleep _time;
 	};
 };
-
-
-_legs_destroyed = _core getVariable "legs_destroyed"; 
 
 while {alive _human} do {
 
@@ -522,7 +514,18 @@ while {alive _human} do {
 				_legs_destroyed = _core getVariable "legs_destroyed";
 				_legs_destroyed = _legs_destroyed + 1;
 				_core setVariable ["legs_destroyed", _legs_destroyed];
-				if (_scarab_version isEqualTo "T-74B") then {_core setVariable ["Boarding_Phase", true];};
+				if (_scarab_version isEqualTo "T-74B") then {
+					_core setVariable ["Walking_Phase", "Injured"];
+					_core setVariable ["scarab_Legs_invincible", true];
+					[_core] Spawn {
+						params ["_core"];
+						uiSleep 45;
+						if (true) then {
+							_core setVariable ["Walking_Phase", "Rise Up"];
+							_core setVariable ["scarab_Legs_invincible", false];
+						};
+					}
+				};
 			};
 			_core setVariable ["leg_object_destroyed", false];
 		};
