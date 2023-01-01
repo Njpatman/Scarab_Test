@@ -15,7 +15,7 @@ params
 	"_scarab_legs_invincible"
 ];
 _segments = []; 
-[_segments] call Scarab_fnc_spawnScarabUpperLeg;
+[_segments, _scarab_legs_invincible, _base] call Scarab_fnc_spawnScarabUpperLeg;
 _segments = _base getVariable "Scarab_segments"; 
 _points = []; 
 { 
@@ -28,37 +28,93 @@ _points_dmg = [];
 if !(_scarab_legs_invincible) then {
 	{ 
 		_pointobj_dmg = "Land_PowerGenerator_F" createVehicle [0,0,0];
-		_pointobj_dmg attachTo [_x,[0,0.35,-0.5]]; 
-		_pointobj_dmg setVariable ["destroyed", false];
+		_pointobj_dmg attachTo [_x,[0,0,0]]; 
+		_pointobj_dmg setVariable ["Leg_Base", _base];
+		_pointobj_dmg enableSimulationGlobal false;
+		_pointobj_dmg setObjectScale 0.05;
 		_points_dmg pushBack _pointobj_dmg;
 	} forEach _points;
 };
-
+_AI_target_obj_array = [];
 { 
+	if !(_scarab_legs_invincible) then {
+		_pointobj_dmg = "Land_PowerGenerator_F" createVehicle [0,0,0];
+		_pointobj_dmg attachTo [_x,[0,0,0]]; 
+		_pointobj_dmg setVariable ["Leg_Base", _base];
+		_pointobj_dmg enableSimulationGlobal false;
+		_pointobj_dmg setObjectScale 0.05;
+		_points_dmg pushBack _pointobj_dmg;
+	};	
+
 	if (_x isEqualTo "Land_Cargo20_blue_F") then {
 		_x attachto [_points#_forEachindex, [0, 10, 0]]; 
-		_x setDir 90; 	
+		for "_e" from 0 to 1 do { 
+			_AI_target_attach_array = [0,0,0];
+			_AI_target_array = _AI_targets select 0;
+			_obj = _x;
+			{
+				_AI_target_obj = _x createVehicle [0,0,0];
+				_AI_target_obj allowCrewInImmobile [true, true];
+				switch (_e) do {
+					case 0: {_AI_target_attach_array = [0,-1.65,-1];};
+					case 1: {_AI_target_attach_array = [0,1.65,-1];};
+				};
+				_AI_target_obj attachTo [_obj, _AI_target_attach_array];
+				_AI_target_obj_array pushBack _AI_target_obj;
+				_AI_target_obj allowDamage false;
+				_AI_target_obj enableSimulationGlobal false;
+				//_AI_target_obj setObjectScale 0.5;
+				_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
+				waitUntil {!isNull _man};
+				_man moveInAny _AI_target_obj;
+				uiSleep 0.1;
+				{ 
+					_x removeCuratorEditableObjects [[_AI_target_obj], true];
+				} forEach (allCurators); 
+			} forEach _AI_target_array;
+		};
+		_x setDir 90; 
 	} else {
 		_x attachto [_points#_forEachindex, [0, 18, 0]]; 
+		for "_e" from 0 to 2 do { 
+			_AI_target_attach_array = [0,0,0];
+			_AI_target_array = _AI_targets select 0;
+			_obj = _x;
+			{
+				_AI_target_obj = _x createVehicle [0,0,0];
+				_AI_target_obj allowCrewInImmobile [true, true];
+				switch (_e) do {
+					case 0: {_AI_target_attach_array = [0,1.75,0];};
+					case 1: {_AI_target_attach_array = [0,-1.75,0];};
+					case 2: {_AI_target_attach_array = [0,0,5];};
+				};
+				_AI_target_obj attachTo [_obj, _AI_target_attach_array];
+				_AI_target_obj_array pushBack _AI_target_obj;
+				_AI_target_obj allowDamage false;
+				_AI_target_obj enableSimulationGlobal false;
+				//_AI_target_obj setObjectScale 0.5;
+				_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
+				waitUntil {!isNull _man};
+				_man moveInAny _AI_target_obj;
+				uiSleep 0.1;
+				{ 
+					_x removeCuratorEditableObjects [[_AI_target_obj, _man], true];
+				} forEach (allCurators); 
+			} forEach _AI_target_array;
+		};
 		_x setDir 270; 
 	};
 } forEach _segments;
-_AI_target_obj_array = [];
-for "_i" from 0 to (count _AI_targets_main_array) - 1 do { 
-	_AI_targets = _AI_targets_main_array select _i;
-	for "_e" from 0 to 2 do { 
-		_AI_target = _AI_targets select _e;
-		_AI_target_obj = _AI_target createVehicle getPosATL _legBase;
-		_AI_target_obj allowCrewInImmobile [true, true];
-		_AI_target_obj attachTo [_legBase, [0,0,-0.895]];
-		_AI_target_obj_array pushBack _AI_target_obj;
-		_AI_target_obj allowDamage false;
-		_man = _grp createUnit [(_AI_targets select 4), [0,0,0], [], 0, "CARGO"];
-		waitUntil {!isNull _man};
-		_man moveInAny _AI_target_obj;
-	};
-};
+
 private _lastPoint = createvehicle [_scarab_point_object, [0, 0, 0], [], 0, "NONE"]; 
+if !(_scarab_legs_invincible) then {
+	_pointobj_dmg = "Land_PowerGenerator_F" createVehicle [0,0,0];
+	_pointobj_dmg attachTo [_lastPoint,[0,0,0]]; 
+	_pointobj_dmg setVariable ["Leg_Base", _base];
+	_pointobj_dmg enableSimulationGlobal false;
+	_pointobj_dmg setObjectScale 0.05;
+	_points_dmg pushBack _pointobj_dmg;
+};	
 _lastPoint setVariable ["destroyed", false]; 
 _points pushBack _lastPoint;
 _base setVariable ["Scarab_points", _points]; 

@@ -29,9 +29,6 @@ private _prevDir = [0, 0, 0];
 private _deltaT = 1/diag_fps;
 {
 	private _point = _x; 
-	//if (typeOf _point isEqualTo "Land_Canteen_F") then {
-	//	_scarab_arm_length = 52;
-	//};
 	private _currentDir = _currentDirs#_forEachindex; 
 	private _targetDir = _targetDirs#_forEachindex; 
 	_targetDir = [_currentDir, _targetDir, _deltaT, _scarab_point_max_rot_speed] call scarab_fnc_speedConstraint; 

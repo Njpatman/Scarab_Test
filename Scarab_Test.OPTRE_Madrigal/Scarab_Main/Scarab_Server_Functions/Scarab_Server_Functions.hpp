@@ -19,6 +19,7 @@ class Scarab
 		class spawnScarabLowerLeg {};
 		class spawnScarabUpperLeg {};
 		class orbitalDrop {};
+		class legDamaged {};
 	};
 	class Modules 
 	{

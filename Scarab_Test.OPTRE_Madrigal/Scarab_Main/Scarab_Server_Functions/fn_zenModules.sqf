@@ -13,8 +13,9 @@
                 ["CHECKBOX", ["Scarab Hates Everyone", "Scarab Hates Everyone and will engage them with extreme prejudice"], [false]],
                 ["CHECKBOX", ["Scarab Has Weapons", "Scarab Has Weapons"], [true]],
                 ["CHECKBOX", ["Make Turrets Invincible", "The Scarabs Weapons are invincible; This and 'Make Legs Invincible' will essentially make the Scarab invincible"], [false]], 
+                ["SLIDER", ["Scarab Individual Leg Health", "Health value for each individual leg"], [1, 100, 12, 1]],
                 ["CHECKBOX", ["Make Legs Invincible", "The Scarabs Legs are invincible; This and 'Make Turrets Invincible' will essentially make the Scarab invincible"], [false]],
-                ["SLIDER", ["Scarab Orbital Drop Height", "Height at Which scarab is dropped"], [150, 10000, 2500, 0]],
+                ["SLIDER", ["Scarab Orbital Drop Height", "Height at Which scarab is dropped"], [500, 10000, 2500, 0]],
                 ["CHECKBOX", ["Scarab Orbital Drop", "Scarab Will drop from the heavens to rain hellfire down on the lowly enemy"], [false]]
             ],
             {
@@ -29,6 +30,7 @@
                     "_scarab_hates_everybody",
                     "_scarab_weapons_enabled",
                     "_scarab_weapons_invincible",
+                    "_scarab_leg_health",
                     "_scarab_legs_invincible",
                     "_scarab_orbital_drop_H",
                     "_scarab_orbital_drop"
@@ -44,7 +46,8 @@
                     _scarab_weapons_enabled,
                     _scarab_weapons_invincible,
                     _scarab_legs_invincible,
-                    _scarab_version
+                    _scarab_version,
+                    _scarab_leg_health
                 ] remoteExec ["Scarab_fnc_createScarab", 2, false];
             }, 
             {}, [_pos]
