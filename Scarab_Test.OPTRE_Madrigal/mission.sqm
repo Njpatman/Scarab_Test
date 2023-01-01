@@ -5,10 +5,10 @@ class EditorData
 	angleGridStep=0.2617994;
 	scaleGridStep=1;
 	autoGroupingDist=10;
-	toggles=514;
+	toggles=522;
 	class ItemIDProvider
 	{
-		nextID=8603;
+		nextID=8633;
 	};
 	class LayerIndexProvider
 	{
@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={2482.3933,234.99066,1858.1654};
-		dir[]={0.57846719,-0.35416111,0.73481119};
-		up[]={0.21907057,0.9351843,0.27827904};
-		aside[]={0.78574049,-1.2945384e-007,-0.61856014};
+		pos[]={1906.2279,207.77385,1502.0178};
+		dir[]={-0.019740002,-0.64504027,0.76391697};
+		up[]={-0.016662702,0.76414078,0.64483064};
+		aside[]={0.99968284,-2.1616142e-007,0.025832556};
 	};
 };
 binarizationWanted=0;
@@ -59,206 +59,6 @@ class ScenarioData
 };
 class CustomAttributes
 {
-	class Category0
-	{
-		name="HNEG_emed_ped_session";
-		class Attribute0
-		{
-			property="HNEG_emed_ped_session_emitter_editor_attributeDB";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[]";
-				};
-			};
-		};
-		class Attribute1
-		{
-			property="HNEG_emed_ped_sessionLIGHT_POINTERS";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute2
-		{
-			property="HNEG_emed_ped_session_emitter_editor_triggerNamespaceDB";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[]";
-				};
-			};
-		};
-		class Attribute3
-		{
-			property="HNEG_emed_ped_sessionPTLGRPIDS";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute4
-		{
-			property="HNEG_emed_ped_session_emitter_editorDB";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[[1,[""emitterNr"",1,""position"",[2263.35,1607.37,0],""positionOffSet"",[1611.35,1686.2,0],""params"",[[[""\A3\data_f\ParticleEffects\Universal\Universal_02.p3d"",8,0,40,1],"""",""Billboard"",1,4,[0,0,0],[0,0,158.762],0,-0.01,0.04,0.05,[2,60],[[0.35,0.35,0.35,0.6],[0.35,0.35,0.35,0.75],[0.35,0.35,0.35,0.45],[0.42,0.42,0.42,0.28],[0.42,0.42,0.42,0.16],[0.42,0.42,0.42,0.09],[0.42,0.42,0.42,0.06],[0.5,0.5,0.5,0.02],[0.5,0.5,0.5,0]],[1,0.55,0.35],0.3,0.2,"""","""","""",0,false,1,[[0,0,0,0]],[0,1,0]],[8,[0.15,0.15,0.15],[-0.0427611,-0.111127,0.600685],0.5,0,[0,0,0,0.06],0,0,0.5,0],[5,[0,0,0]],[0,0,0],0.01,""""],""class"",""BigDestructionSmoke"",""light"",[],""trigger"",-1,""group"",[8596],""consAttach"",[],""consAttachAttribute"",[],""consAttachGlobal"",[],""connectionsThisTrigger"",[],""thisIsHNEGAttEmitter"",[],""dieout"",0,""thisIsHNEGLight"",false,""thisIsHNEGSound"",false,""allowhideshow"",false,""selection"",[],""selpos"",true,""enableForZeus"",true,""onlyZeus"","""",""terobj"",[]]],[3,[""emitterNr"",3,""position"",[1832.71,1943.22,20],""positionOffSet"",[1733.34,1813.32,0],""params"",[[[""\A3\data_f\ParticleEffects\Universal\Universal.p3d"",16,13,2,0],"""",""Billboard"",1,3.5,[0,0,20],[0,0,-1.5],1,-1.05,1,0.17,[0.1,0.1,0.1,0.1,0.1,0.08,0.08,0.08,0.08,0],[[1,0.3,0.3,-6.5],[1,0.3,0.3,-6],[1,0.3,0.3,-5.5],[1,0.3,0.3,-4.5]],[1000],0.5,0.55,"""","""","""",0,false,0,[[0,0,0,0]],[0,1,0]],[2.5,[0,0,0.2],[0.2,0.2,1],2,0.04,[0,0.15,0.15,0],0.3,0.15,360,0],[0,[0,0,0]],[0,0,0],0.05,""""],""class"",""AirFireSparks"",""light"",[],""trigger"",-1,""group"",[8599],""consAttach"",[],""consAttachAttribute"",[],""consAttachGlobal"",[],""connectionsThisTrigger"",[],""thisIsHNEGAttEmitter"",[],""dieout"",0,""thisIsHNEGLight"",false,""thisIsHNEGSound"",false,""allowhideshow"",false,""selection"",[],""selpos"",true,""enableForZeus"",true,""onlyZeus"","""",""terobj"",[]]]]";
-				};
-			};
-		};
-		class Attribute5
-		{
-			property="HNEG_emed_ped_sessionATTNOTOOL";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute6
-		{
-			property="HNEG_emed_ped_session_emitter_editor_objectNamespaceDB";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[[],[],[],[],[[8600,""hneg_emed_emtrdatasafe"",[[3100.57,1343.67,0],""ExploRocksDark"",[[[""\A3\data_f\ParticleEffects\Universal\Universal.p3d"",16,12,9,0],"""",""Billboard"",1,16,[0,0,0],[0,0,22],0,50,0.01,0,[8,8],[[0.2,0.2,0.2,1],[0.2,0.2,0.2,0]],[1000],0,0,"""","""","""",0,false,0.1,[[0,0,0,0]],[0,1,0]],[0.5,[0.1,0.1,0],[2,2,7],20,1,[0.1,0.1,0.1,0.1],0,0,1,0],[25,[45,45,1]],[0,0,0],0.002,""""],[],-1,[8600],[],[],[],[],false,false,[],true,true,false,""emitterNr"",""emitterNr"",""emitterNr"",""emitterNr"",""emitterNr""]],[8600,""hneg_emed_thisconnectionid"",[0]],[8600,""hneg_emed__connectionsthisattach"",[]],[8600,""hneg_emed_thisidx"",4],[8600,""hneg_emed_thisorigin"",[3100.57,1343.67,0]],[8600,""hneg_emed_thisishnegemitter"",true],[8600,""hneg_emed_initingemitter"",true],[8600,""hneg_emed_thisconnectiontype"",[""AttachEmitter""]],[8600,""hneg_emed_thisname"",""particle_emitter_4""],[8600,""hneg_emed_thisinit"",""""],[8600,""hneg_emed_thisid"",8600],[8600,""hneg_emed_thisunregeh"",0],[8600,""hneg_emed_emitternr"",4],[8600,""hneg_emed_internalinitchange"",false],[8600,""hneg_emed__connectionsthisattachattribute"",[]]],[[8601,""hneg_emed_emtrdatasafe"",[[2580.96,1185.11,0.0626984],""SticksFall"",[[[""\A3\data_f\ParticleEffects\Hit_Leaves\Sticks.p3d"",1,0,1,0],"""",""SpaceObject"",3,5,[0,0,0],[0,0,28],1,1.7,1,0.1,[1.2],[[1,1,1,1]],[1],0.1,0.1,"""","""","""",0,false,0,[[0,0,0,0]],[0,0,0]],[0.1,[0.05,0.05,0.05],[0.5,0.5,0],0,0.2,[0.05,0.05,0.05,0],0,0,1,0],[25,[100,100,0]],[0,0,0],0.05,""""],[],-1,[8601],[],[],[],[],false,false,[],true,true,false,""emitterNr"",""emitterNr"",""emitterNr"",""emitterNr"",""emitterNr""]],[8601,""hneg_emed_thisconnectionid"",[0]],[8601,""hneg_emed__connectionsthisattach"",[]],[8601,""hneg_emed_thisidx"",5],[8601,""hneg_emed_thisorigin"",[2580.96,1185.11,0.0626984]],[8601,""hneg_emed_thisishnegemitter"",true],[8601,""hneg_emed_initingemitter"",true],[8601,""hneg_emed_thisconnectiontype"",[""AttachEmitter""]],[8601,""hneg_emed_thisname"",""particle_emitter_5""],[8601,""hneg_emed_thisinit"",""""],[8601,""hneg_emed_thisid"",8601],[8601,""hneg_emed_thisunregeh"",0],[8601,""hneg_emed_emitternr"",5],[8601,""hneg_emed_internalinitchange"",true],[8601,""hneg_emed__connectionsthisattachattribute"",[]]]]";
-				};
-			};
-		};
-		class Attribute7
-		{
-			property="HNEG_emed_ped_sessionLGTGRPIDS";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute8
-		{
-			property="HNEG_emed_ped_session_emitter_editor";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[[""cur_emitter"",5,""cur_params"",""editor_toggled"",true,""cur_page"",0]]";
-				};
-			};
-		};
-		class Attribute9
-		{
-			property="HNEG_emed_ped_sessionRUN";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute10
-		{
-			property="HNEG_emed_ped_sessionNOTOOLEHS";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute11
-		{
-			property="HNEG_emed_ped_sessionTOOLVER";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute12
-		{
-			property="HNEG_emed_ped_sessionID";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					nil=1;
-					singleType="ANY";
-				};
-			};
-		};
-		class Attribute13
-		{
-			property="HNEG_emed_ped_sessionPOINTERS";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[]";
-				};
-			};
-		};
-		class Attribute14
-		{
-			property="HNEG_emed_ped_session_emitter_editor_parsingNamespaceDB";
-			expression="false";
-			class Value
-			{
-				class data
-				{
-					singleType="STRING";
-					value="[[""hneg_emed_session_on"",true],[""hneg_emed_indexmake"",[-1,-1,-1,-1,8600,8601]],[""hneg_emed_editortoggled"",true],[""hneg_emed_scrollblockbottomorig"",[0,0,0,0]],[""hneg_emed_allemittergrpsids"",[[""particle_emitter_4""],[""particle_emitter_5""]]]]";
-				};
-			};
-		};
-		nAttributes=15;
-	};
 };
 class Mission
 {

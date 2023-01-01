@@ -8,19 +8,37 @@ params
 private _group = _core getVariable "scarab_group"; 
 private _variation = _core getVariable "scarab_variation"; 
 private _variation_bool = _core getVariable "scarab_variation_bool"; 
+private _Boarding_Phase = _core getVariable "Boarding_Phase"; 
 
-if (!_variation_bool) then {
+if (!_variation_bool && !_Boarding_Phase) then {
 	_variation = _variation + 0.0035;
-	if (_variation > 0.85) then {
+	if (_variation > 1) then {
 		_variation_bool = true;
 	};
 };
-if (_variation_bool) then {
+if (_variation_bool && !_Boarding_Phase) then {
 	_variation = _variation - 0.0035;
 	if (_variation < 0) then {
 		_variation_bool = false;
 	};
 };
+
+//if (_Boarding_Phase && _variation_bool) then {
+//	_variation_bool = true;
+//	_variation = _variation - 0.0095;
+//	if (_variation < -(_scarab_walk_height + 2.5)) then {
+//		_variation_bool = false;
+//	};
+//};
+
+//if (_Boarding_Phase && !_variation_bool) then {
+//	_variation_bool = true;
+//	_variation = _variation - 0.0095;
+//	if (_variation < -(_scarab_walk_height + 2.5)) then {
+//		_variation_bool = false;
+//		_core setVariable ["Boarding_Phase", false];
+//	};
+//};
 
 _core setVariable ["scarab_variation", _variation]; 
 _core setVariable ["scarab_variation_bool", _variation_bool]; 
