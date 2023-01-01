@@ -5,10 +5,12 @@ _leg_base_intermediary = nearestObject [_target, "Land_PowerGenerator_F"];
 _leg_base = _leg_base_intermediary getVariable "Leg_Base";
 _leg_health = _leg_base getVariable "Leg_Health";
 _Hit_In_Progress = _target getVariable "Hit_In_Progress";
+_core = attachedTo _leg_base;
+_legs_invincible = _core getVariable "scarab_Legs_invincible";
 
 //hintSilent str _ammo;
 
-if (_leg_health < 0.1 || (((_ammo select 0) < 125) && (_ammo select 3) < 1.15) || !_isDirect || _Hit_In_Progress) exitWith {};
+if (_leg_health < 0.1 || (((_ammo select 0) < 125) && (_ammo select 3) < 1.15) || !_isDirect || _Hit_In_Progress || _legs_invincible) exitWith {};
 
 _target setVariable ["Hit_In_Progress", true]; 
 
@@ -35,26 +37,26 @@ if ((_ammo select 0) >= 265) then {
 	_random_Number = [0,1] call BIS_fnc_randomInt;
 	switch (_random_Number) do {
 		case 0: { 
-			[_particle_emitter_0, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,13,2,0],"","Billboard",1,3.5,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 1.5],1,1.05,1,0.17,[0.5,0.5,0.5,0.5,0.1,0.08,0.08,0.08,0.08,0],[[0.751151,0,0.781917,-6.5],[1,0.3,1,-6],[1,0.3,1,-5.5],[1,0.3,1,-4.5]],[1000],0.5,0.55,"","",_particle_emitter_0,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
+			[_particle_emitter_0, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,13,2,0],"","Billboard",1,2.5,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 1.5],1,1.05,1,0.17,[0.5,0.5,0.5,0.5,0.1,0.08,0.08,0.08,0.08,0],[[0.751151,0,0.781917,-6.5],[1,0.3,1,-6],[1,0.3,1,-5.5],[1,0.3,1,-4.5]],[1000],0.5,0.55,"","",_particle_emitter_0,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_0, [2.5,[0,0,0.2],[0,0,1],2,0.04,[0,0.15,0.15,0],0.3,0.15,360,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_0, 0.25] remoteExec ["setDropInterval", 0];
-			[_particle_emitter_1, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,12,8,0],"","Billboard",1,5,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 2],1,1,0.8,0.5,[0.8,0.8,1.4],[[0.941,0.443,1,0.07],[0.941,0.443,1,0.003]],[5],0.1,0.1,"","",_particle_emitter_1,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
+			[_particle_emitter_0, 0.45] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_1, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,12,8,0],"","Billboard",1,2,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 2],1,1,0.8,0.5,[0.8,0.8,1.4],[[0.941,0.443,1,0.07],[0.941,0.443,1,0.003]],[5],0.1,0.1,"","",_particle_emitter_1,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_1, [0.2,[0.3,0.3,0.3],[0,0,0],20,0.15,[0,0,0,0],0,0,1,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_1, 0.15] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_1, 0.25] remoteExec ["setDropInterval", 0];
 			[_particle_emitter_2, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,0,32,0],"","Billboard",1,0.5,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 5],0,10,7.9,0.1,[1,1,1.5,1],[[1,1,1,-10],[1,0,1,-8],[1,0,1,0],[0,0,0,0]],[1],0.2,0.2,"","",_particle_emitter_2,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_2, [0,[0,0,0],[0,0,4],15,0.2,[0,0,0,0],0,0,1,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_2, 0.05] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_2, 0.15] remoteExec ["setDropInterval", 0];
 		};
 		case 1: { 
 			[_particle_emitter_0, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,13,2,0],"","Billboard",1,1,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 1.5],1,1.05,1,0.17,[0.5,0.5,0.5,0.5,0.1,0.08,0.08,0.08,0.08,0],[[0.0704428,0.112747,0.781917,-6.5],[0.12813,0,1,-6],[0.0858263,0.197355,1,-5.5],[0,0,1,-4.5],[0,0,0,0]],[1000],0.5,0.55,"","",_particle_emitter_0,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_0, [2.5,[0,0,0.2],[0,0,1],2,0.04,[0,0.15,0.15,0],0.3,0.15,360,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_0, 0.25] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_0, 0.45] remoteExec ["setDropInterval", 0];
 			[_particle_emitter_1, [["\A3\data_f\ParticleEffects\Universal\Universal.p3d",16,12,8,0],"","Billboard",1,3,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 2],1,1,0.8,0.5,[0.8,0.8,1.4],[[0,0.331958,1,0.07],[0,0.274271,1,0.003]],[5],0.1,0.1,"","",_particle_emitter_1,0,false,0,[[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_1, [0.2,[0.3,0.3,0.3],[0,0,0.4],20,0.15,[0,0,0,0],0,0,1,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_1, 0.15] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_1, 0.25] remoteExec ["setDropInterval", 0];
 			[_particle_emitter_2, [["\A3\data_f\cl_exp.p3d",1,0,1,1],"","Billboard",1,4,[0,0,0],[-(_velocity select 0)/65, -(_velocity select 1)/65, 0.5],50,0.045,0.04,0.05,[0.1,0.05,0],[[0,0,1,-1],[0,0.145711,1,-1],[0,0,0,0.758843]],[0.5,1,0],0,20,"","",_particle_emitter_2,0,false,0,[[0,0,0,0],[0,0,0,0]],[0,1,0]]] remoteExec ["setParticleParams", 0];
 			[_particle_emitter_2, [0.4,[0.1,0.1,0.1],[0,0,0.2],10,3.5,[0,0.01,0.1,0],0,0,0.1,0]] remoteExec ["setParticleRandom", 0];
-			[_particle_emitter_2, 0.01] remoteExec ["setDropInterval", 0];
+			[_particle_emitter_2, 0.15] remoteExec ["setDropInterval", 0];
 		};
 	};
 

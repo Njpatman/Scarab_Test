@@ -7,7 +7,7 @@
         //Dialouge box for custom settings.
         ["Scarab Options", 
             [
-                ["COMBO", ["Scarab Version", "Version of the scarab"], [["T-74B", "T-74"], [["T-47B (Halo 3)"], ["T-47 (Halo 2)"]], 0]],
+                ["COMBO", ["Scarab Version", "Version of the scarab"], [["T-74B", "T-74", "No Body (Testing ONLY)"], [["T-47B (Halo 3)"], ["T-47 (Halo 2)"], ["No Body (Testing ONLY)"]], 0]],
                 ["SLIDER", ["Scarab Speed", "Speed at which the Scarab will move, note that higher speeds will be more intensive on the server"], [1, 6, 2.65, 2]],
                 ["SIDES", ["Scarab Side", "Scarab Side, sets Scarabs weapons' side and is overridden by 'Scarab Hates Everyone'"], east],    
                 ["CHECKBOX", ["Scarab Hates Everyone", "Scarab Hates Everyone and will engage them with extreme prejudice"], [false]],
@@ -15,6 +15,7 @@
                 ["CHECKBOX", ["Make Turrets Invincible", "The Scarabs Weapons are invincible; This and 'Make Legs Invincible' will essentially make the Scarab invincible"], [false]], 
                 ["SLIDER", ["Scarab Individual Leg Health", "Health value for each individual leg"], [1, 100, 12, 1]],
                 ["CHECKBOX", ["Make Legs Invincible", "The Scarabs Legs are invincible; This and 'Make Turrets Invincible' will essentially make the Scarab invincible"], [false]],
+                ["CHECKBOX", ["[DEBUG] Force Leg EH to Server", "Forces leg EH to server in an attempt to identify frame problems/see if legs will still be damaged"], [false]],
                 ["SLIDER", ["Scarab Orbital Drop Height", "Height at Which scarab is dropped"], [500, 10000, 2500, 0]],
                 ["CHECKBOX", ["Scarab Orbital Drop", "Scarab Will drop from the heavens to rain hellfire down on the lowly enemy"], [false]]
             ],
@@ -32,6 +33,7 @@
                     "_scarab_weapons_invincible",
                     "_scarab_leg_health",
                     "_scarab_legs_invincible",
+                    "_scarab_legs_force_server",
                     "_scarab_orbital_drop_H",
                     "_scarab_orbital_drop"
                 ];
@@ -47,7 +49,8 @@
                     _scarab_weapons_invincible,
                     _scarab_legs_invincible,
                     _scarab_version,
-                    _scarab_leg_health
+                    _scarab_leg_health,
+                    _scarab_legs_force_server
                 ] remoteExec ["Scarab_fnc_createScarab", 2, false];
             }, 
             {}, [_pos]

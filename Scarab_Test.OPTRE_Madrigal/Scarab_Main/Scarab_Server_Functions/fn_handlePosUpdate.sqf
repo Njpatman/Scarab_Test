@@ -8,40 +8,42 @@ params
 private _group = _core getVariable "scarab_group"; 
 private _variation = _core getVariable "scarab_variation"; 
 private _variation_bool = _core getVariable "scarab_variation_bool"; 
-private _Boarding_Phase = _core getVariable "Boarding_Phase"; 
+private _Walking_Phase = _core getVariable "Walking_Phase"; 
 
-if (!_variation_bool && !_Boarding_Phase) then {
-	_variation = _variation + 0.0035;
-	if (_variation > 1) then {
-		_variation_bool = true;
+switch (_Walking_Phase) do {
+	case "Do Nothing": { };
+	case "N/A": { 
+		if (!_variation_bool) then {
+			_variation = _variation + 0.0085;
+			if (_variation > 1) then {
+				_variation_bool = true;
+			};
+			_core setVariable ["scarab_variation_bool", _variation_bool]; 
+		};
+		if (_variation_bool) then {
+			_variation = _variation - 0.0085;
+			if (_variation < 0) then {
+				_variation_bool = false;
+			};
+			_core setVariable ["scarab_variation_bool", _variation_bool]; 
+		};
+	};
+	case "Injured": { 
+		_variation = _variation - 0.185;
+		if (((getPosATL _core) select 2) < 2.15) then {
+			_core setVariable ["Walking_Phase", "Do Nothing"];
+		};
+	};
+	case "Rise Up": { 
+		_variation = _variation + 0.185;
+		if (((getPosATL _core) select 2) > (_scarab_walk_height)) then {
+			_core setVariable ["Walking_Phase", "N/A"];
+		};
 	};
 };
-if (_variation_bool && !_Boarding_Phase) then {
-	_variation = _variation - 0.0035;
-	if (_variation < 0) then {
-		_variation_bool = false;
-	};
-};
-
-//if (_Boarding_Phase && _variation_bool) then {
-//	_variation_bool = true;
-//	_variation = _variation - 0.0095;
-//	if (_variation < -(_scarab_walk_height + 2.5)) then {
-//		_variation_bool = false;
-//	};
-//};
-
-//if (_Boarding_Phase && !_variation_bool) then {
-//	_variation_bool = true;
-//	_variation = _variation - 0.0095;
-//	if (_variation < -(_scarab_walk_height + 2.5)) then {
-//		_variation_bool = false;
-//		_core setVariable ["Boarding_Phase", false];
-//	};
-//};
 
 _core setVariable ["scarab_variation", _variation]; 
-_core setVariable ["scarab_variation_bool", _variation_bool]; 
+
 private _start = getPosASL _core; 
 private _pivot = _core worldToModel (ASLtoAGL _start); 
 _start set [2, (getTerrainHeightASL _start) + _scarab_walk_height + _variation]; 
@@ -52,10 +54,11 @@ private _end = if (_hasWaypoint) then {
 	AGLtoASL _wpPos; 
 } else { _start; }; 
 private _distancetoTarget = _start distance2D _end; 
-private _active = _distancetoTarget > 20; 
+private _active = _distancetoTarget > 20;
 if (!_active && _hasWaypoint) then { 
 	deleteWaypoint [_group, (currentWaypoint _group)]; 
 }; 
+if (_Walking_Phase isEqualTo  "Do Nothing") then { _active = false; };
 _core setVariable ["scarab_active", _active]; 
 private _deltaT = 1/diag_fps; 
 private _velocityAdd = [0, 0, 9.81*_deltaT]; 

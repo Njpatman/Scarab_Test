@@ -367,10 +367,10 @@ if (_scarab_version isEqualTo "T-74B") then {
 	_object75 enableSimulationGlobal false;
 
 	_object76 = createVehicle ["OPTRE_FC_TyrantAA", [0, 0, 11111], [], 0, "CAN_COLLIDE"];
-	_object76 allowDamage false;
 	_object76 enableSimulationGlobal false;
+	_object76 allowDamage false;
 	_object76 setVectorDirAndUp [[0.799996,0.00261398,0],[0,0,0.8]];
-	_object76 setPosASL [27.9319,39.7408,93.45];
+	_object76 setPosASL [27.9319,39.7408,90.85];
 	_object76 allowDamage true;
 
 	_object77 = createVehicle ["Land_OPTRE_FC_FR_Platform_3", [0, 0, 0], [], 0, "CAN_COLLIDE"];
@@ -1651,7 +1651,7 @@ if (_scarab_version isEqualTo "T-74B") then {
 	_objectScaleArray pushBack [0.5, _object195];
 	_objectScaleArray pushBack [0.5, _object196];
 	_objectScaleArray pushBack [0.3, _object206];
-	_objectScaleArray pushBack [0.725, _object76];
+	_objectScaleArray pushBack [0.635, _object76];
 
 } else {
 	
