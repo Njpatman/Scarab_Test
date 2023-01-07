@@ -82,6 +82,7 @@ if (_movedistancetoTarget > _scarab_minimum_distance) then {
 		if (_error < _scarab_minimum_distance) then { 
 			break; 
 		}; 
+		//uiSleep 0.035;
 	}; 
 	_base setVariable ["scarab_currentEndPoint", _pointpositions#_scarab_num_segments]; 
 	_base setVariable ["scarab_pointpositions", _pointpositions]; 

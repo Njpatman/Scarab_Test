@@ -58,3 +58,15 @@ class After_Impact
 	sound[] = {"Scarab_Main\Scarab_Sounds\After_Impact.ogg", 1, 1};
 	titles[] = {};
 };
+class Alarm
+{
+	name = "Alarm";
+	sound[] = {"Scarab_Main\Scarab_Sounds\Alarm.ogg", 1, 1};
+	titles[] = {};
+};
+class Core_explosion
+{
+	name = "Core_explosion";
+	sound[] = {"Scarab_Main\Scarab_Sounds\Core_explosion.ogg", 1, 1};
+	titles[] = {};
+};

@@ -33,23 +33,23 @@ for "_e" from 0 to ((count _scarab_side) - 1) do {
 	switch (_side) do {
 		case "WEST": 
 		{ 
-			_AI_targets = [["CBA_B_InvisibleTarget", "CBA_B_InvisibleTargetVehicle", "CBA_B_InvisibleTargetAir"], WEST, "B_UAV_AI_F"];
+			_AI_targets = [["CBA_B_InvisibleTarget", "CBA_B_InvisibleTargetVehicle"], WEST, "OPTRE_FC_Elite_Minor"];
 		};
 		case "EAST": 
 		{ 
-			_AI_targets = [["CBA_O_InvisibleTarget", "CBA_O_InvisibleTargetVehicle", "CBA_O_InvisibleTargetAir"], EAST, "O_UAV_AI_F"];
+			_AI_targets = [["CBA_O_InvisibleTarget", "CBA_O_InvisibleTargetVehicle"], EAST, "OPTRE_FC_Elite_Minor"];
 		};
 		case "GUER": 
 		{ 
-			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle", "CBA_I_InvisibleTargetAir"], independent, "I_UAV_AI_F"];
+			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle"], independent, "OPTRE_FC_Elite_Minor"];
 		};
 		case "CIV": 
 		{ 
-			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle", "CBA_I_InvisibleTargetAir"], civilian, "C_UAV_AI_F"];
+			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle"], civilian, "OPTRE_FC_Elite_Minor"];
 		};
 		case "ENEMY": 
 		{ 
-			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle", "CBA_I_InvisibleTargetAir"], civilian, "C_UAV_AI_F"];
+			_AI_targets = [["CBA_I_InvisibleTarget", "CBA_I_InvisibleTargetVehicle"], civilian, "OPTRE_FC_Elite_Minor"];
 		};
 		default {"EAST"};
 	};
@@ -80,31 +80,36 @@ _scarab_minimum_distance = 0.1;
 _scarab_max_rot_speed = (8.25/90) * _scarab_overall_speed;   
 _scarab_move_speed = 2.65*_scarab_overall_speed;   
 _scarab_leg_sleep = (1 / _scarab_overall_speed); 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+
 _core = createVehicle ["Land_Cargo10_blue_F", [0, 0, 0], [], 0, "NONE"]; 
 _core setVectorUp (surfaceNormal position _core);
 _core enableSimulationGlobal false;
-_core setPosASL [28.117, 79.205, 89];
+_core setPosASL [16.842, 62.923, 44.837];
 if (_scarab_version isEqualTo "T-74") then {
 	_core setPosASL [25.889, 85.238, 50.837];
 };
 //_core hideObjectGlobal true;
 private _tractor = createVehicle ["C_Tractor_01_F", [0,0,100000], [], 0, "NONE"]; 
 _tractor allowDamage false; 
-_human = _grp createUnit [(_AI_targets select 2), _core, [], 0, "NONE"];
+_human = _grp createUnit ["B_UAV_AI_F", _core, [], 0, "NONE"];
+[_human] joinSilent _grp;
 _human moveInDriver _tractor; 
 _core allowDamage false;
 _human disableAI "all"; 
 _human allowDamage false; 
-_tractor attachto [_core, [0, -35, 8.5]]; 
+_tractor attachto [_core, [0, -25, 9.5]]; 
 _core setVariable ["Scarab_group", _grp]; 
 _core setVariable ["Scarab_driver", _human];
 _core setVariable ["legs_destroyed", 0]; 
 private _handles = []; 
 private _objects = [_core, _tractor, _human]; 
 private _leg_arrays = []; 
-_core setVariable ["Scarab_handles", _handles]; 
+//_core setVariable ["Scarab_handles", _handles]; 
 _core setVariable ["Scarab_objects", _objects]; 
 _core setVariable ["Scarab_phase", 0]; 
 _core setVariable ["scarab_variation", -2.5]; 
@@ -112,68 +117,105 @@ _core setVariable ["scarab_Legs_invincible", false];
 _core setVariable ["scarab_variation_bool", true]; 
 _core setVariable ["Scarab_nextUpdate", time + 5];
 _core setVariable ["Walking_Phase", "N/A"]; 
+_core setVariable ["Alarm", false];
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+_core_damage_obj = createVehicle ["Land_PowerGenerator_F", [0, 0, 0], [], 0, "NONE"]; 
+_core_damage_obj setPosASL [16.904, 21.464, 54.016];
+[_core_damage_obj, _core] call BIS_fnc_attachToRelative;
+_core_damage_obj enableSimulationGlobal false;
+_core_damage_obj allowDamage false;
+
+_core_damage_obj_pretty = createVehicle ["Sign_Sphere200cm_F", [0, 0, 0], [], 0, "NONE"]; 
+_core_damage_obj_pretty setPosASL [16.904, 20.756, 54.751];
+[_core_damage_obj_pretty, _core] call BIS_fnc_attachToRelative;
+_core_damage_obj_pretty enableSimulationGlobal false;
+_core_damage_obj_pretty allowDamage false;
+_core_damage_obj_pretty setObjectTextureGlobal [0, "Scarab_Main\Scarab_Textures\Core_Healthy.paa"];
+
+_core_damage_obj_shield = createVehicle ["OPTRE_FC_Energy_shield", [0, 0, 0], [], 0, "NONE"]; 
+_core_damage_obj_shield setPosASL [16.904, 20.854, 54.777];
+[_core_damage_obj_shield, _core] call BIS_fnc_attachToRelative;
+_core_damage_obj_shield enableSimulationGlobal false;
+_core_damage_obj_shield allowDamage false;
+
 private _legs = []; 
-_turret_array = [];
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-_objectScaleArray = [];
+_Body_array = [];
+_Turret_array = [];
+
 if !(_scarab_version isEqualTo "No Body (Testing ONLY)") then {
-	_objectScaleArray = [_scarab_version] call Scarab_fnc_spawnScarabBody;
+	_Body_array = [_scarab_version] call Scarab_fnc_spawnScarabBody;
 };
 _core_embed = createVehicle ["Land_ButaneCanister_F", [28.117, 79.205, 132.194], [], 0, "NONE"]; 
 _core_embed attachTo [_core, [0,-20,0]];
 _core_embed hideObjectGlobal true;
-_Main_Body = nearestObjects [_core_embed, [], 150];
-_turret_array = nearestObjects [_core_embed, ["OPTRE_FC_T26_AT_IND", "OPTRE_FC_T56_AAG", "OPTRE_FC_T26_AI", "OPTRE_FC_T29B_NVar", "OPTRE_FC_TyrantAA"], 150];
 {
-	[_x, _core_embed] call BIS_fnc_attachToRelative;
-	if (_x != _core) then {
-		_x enableSimulationGlobal false;
-	};
-} forEach _Main_Body;
+	_Object = _x select 0;
+	_Object_Vector_array = _x select 1;
+	_Object_Pos_array = _x select 2;
 
-if (_scarab_weapons_enabled) then {
-	{
-		_x allowCrewInImmobile [true, true];
-		_x enableSimulationGlobal true;
-		_Gunner = _grp createUnit [(_AI_targets select 2), _core, [], 0, "NONE"];
-		_Gunner forceAddUniform "OPTRE_FC_Elite_CombatSkin";
-		_Gunner addVest "OPTRE_FC_Elite_Armor_Minor";
-		_Gunner addHeadgear "OPTRE_FC_Elite_Helmet_Minor";
-		_Gunner addItem "OPTRE_FC_NVG";
-		_Gunner moveInAny _x;
-		if (_scarab_weapons_invincible) then {
-			_x allowDamage false;
-			_Gunner allowDamage false;
+	//_Object setPosASL [(_Object_Pos_array select 0), (_Object_Pos_array select 1), (_Object_Pos_array select 2) - 4];
+	_Object setVectorDirAndUp _Object_Vector_array;
+
+	[_Object, _core_embed] call BIS_fnc_attachToRelative;
+
+	if (_Object != _core && !(isSimpleObject _Object)) then {
+		_Object enableSimulationGlobal false;
+
+		if (typeOf _Object isEqualTo "Land_VR_Slope_01_F" || typeOf _Object isEqualTo "Sign_Sphere200cm_Geometry_F") then {
+			_Object setObjectTextureGlobal [0, "#(argb,8,8,3)color(0,1,0,1)"];
+			_Object setObjectTextureGlobal [1, "#(argb,8,8,3)color(0,1,0,1)"];
 		};
-		if (typeOf _x isEqualTo "OPTRE_FC_T56_AAG") then {
-			removeAllWeapons _x;
-			_x removeWeapon "OPTRE_FC_T56_AAG";
-			_x removeWeapon "OPTRE_FC_T56_AA";
-			_x addWeapon "OPTRE_Excavation_Beam"; 
-			_x addMagazine "Superheated_Plasma_Beam"; 
-			_x addEventHandler ["Fired",{(_this select 0) setVehicleAmmo 1}];
+
+		if (typeOf _Object isEqualTo "Reflector_Cone_01_wide_green_F" || typeOf _Object isEqualTo "Reflector_Cone_01_Long_green_F") then {
+			_Object enableSimulationGlobal true;
 		};
-	uiSleep 0.05;
-	} forEach _turret_array;
-};
 
-for "_i" from 0 to ((count _objectScaleArray) - 1) do { 
-	_objectScaleParse = _objectScaleArray select _i;
-	_objectScaleNum = _objectScaleParse select 0;
-	_objectScaleObj = _objectScaleParse select 1;
-	_objectScaleObj enableSimulationGlobal false;
-	_objectScaleObj setObjectScale _objectScaleNum;
-	if (typeOf _objectScaleObj isEqualTo "Land_VR_Slope_01_F" || typeOf _objectScaleObj isEqualTo "Sign_Sphere200cm_Geometry_F") then {
-		_objectScaleObj setObjectTextureGlobal [0, "#(argb,8,8,3)color(0,1,0,1)"];
-		_objectScaleObj setObjectTextureGlobal [1, "#(argb,8,8,3)color(0,1,0,1)"];
+		if (_scarab_weapons_enabled) then {
+			if (typeOf _Object isEqualTo "OPTRE_FC_T26_AT" || typeOf _Object isEqualTo "OPTRE_FC_T56_AAG" || typeOf _Object isEqualTo "OPTRE_FC_T26_AI" || typeOf _Object isEqualTo "OPTRE_FC_T29B_NVar" || typeOf _Object isEqualTo "OPTRE_FC_T56_AA") then {
+				_Turret_array pushBack _Object;
+				_Object allowCrewInImmobile [true, true];
+				_Object enableSimulationGlobal true;
+				_Gunner = _grp createUnit [(_AI_targets select 2), _core, [], 0, "NONE"];
+				if (typeOf _Object isEqualTo "OPTRE_FC_T56_AAG" || typeOf _Object isEqualTo "OPTRE_FC_T29B_NVar" || typeOf _Object isEqualTo "OPTRE_FC_T56_AA") then {
+					deleteVehicle _Gunner;
+					_Gunner = _grp createUnit ["B_UAV_AI_F", _core, [], 0, "NONE"];
+				};
+				[_Gunner] joinSilent _grp;
+				_Gunner forceAddUniform "OPTRE_FC_Elite_CombatSkin";
+				_Gunner addVest "OPTRE_FC_Elite_Armor_Minor";
+				_Gunner addHeadgear "OPTRE_FC_Elite_Helmet_Minor";
+				_Gunner addItem "OPTRE_FC_NVG";
+				_Gunner moveInAny _Object;
+				_Gunner setUnloadInCombat [false, false];
+				_Gunner disableAI "PATH";
+				_Gunner addEventHandler ["GetOutMan", {
+					params ["_unit"];
+					deleteVehicle _unit;
+				}];
+
+				if (_scarab_weapons_invincible) then {
+					_Object allowDamage false;
+					_Gunner allowDamage false;
+				};
+				if (typeOf _Object isEqualTo "OPTRE_FC_T56_AAG") then {
+					removeAllWeapons _Object;
+					_Object removeWeapon "OPTRE_FC_T56_AAG";
+					_Object removeWeapon "OPTRE_FC_T56_AA";
+					_Object addWeapon "OPTRE_Excavation_Beam"; 
+					_Object addMagazine "Superheated_Plasma_Beam"; 
+					_Object addEventHandler ["Fired",{(_this select 0) setVehicleAmmo 1}];
+				};
+				uiSleep 0.25;
+				[_Gunner] joinSilent _grp;
+			};
+		};
 	};
-	uiSleep 0.05;
-};
-
-{
-	_x enableSimulationGlobal true;
-} forEach _turret_array;
+} forEach _Body_array;
 
 _core_embed_Dir = getDir _core_embed;
 _core_embed setDir _core_embed_Dir;
@@ -182,8 +224,8 @@ _core setPosATL [(_pos select 0), (_pos select 1), (_pos select 2) + _scarab_orb
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 for "_pair" from 1 to _scarab_num_of_legs do { 
 	uiSleep 0.5;
-	_bodyLength = 78;
-	_bodyWidth = 70;
+	_bodyLength = 85;
+	_bodyWidth = 50;
 	if (_scarab_version isEqualTo "T-74") then { _bodyLength = 50; };
 	private _posY = _pair * _bodyLength/_scarab_num_of_legs;
 	_posY = _posY - _bodyLength * 0.135; 
@@ -191,7 +233,7 @@ for "_pair" from 1 to _scarab_num_of_legs do {
 		if (_scarab_version isEqualTo "T-74") then {_bodyWidth = 70;};
 		uiSleep 0.5;
 		private _posX = _side * _bodyWidth/4; 
-		private _legBasePos = [_posX, _posY - 76, -2]; 
+		private _legBasePos = [_posX, _posY - 76, -3]; 
 		if (_scarab_version isEqualTo "T-74") then {_legBasePos = [_posX , _posY - 52, 0];};
 		private _legDir = _side * 90; 
 		_legBase = _scarab_target_object createvehicle [0, 0, 0];
@@ -200,7 +242,7 @@ for "_pair" from 1 to _scarab_num_of_legs do {
 			_bodyWidth = 42.5;
 			if (_scarab_version isEqualTo "T-74") then {_bodyWidth = 70;};
 			private _posX = _side * _bodyWidth/4; 
-			_legBasePos = [_posX , _posY - 76, 10]; 
+			_legBasePos = [_posX , _posY - 76, 11.5]; 
 			if (_scarab_version isEqualTo "T-74") then {_legBasePos = [_posX , _posY - 49, 0]; };
 			_scarab_point_max_angle = 135/80.5;    
 		};
@@ -211,9 +253,6 @@ for "_pair" from 1 to _scarab_num_of_legs do {
 		_legBase setVariable ["Hit_In_Progress", false]; 
 		_legBase setVariable ["Leg_Health", _scarab_leg_health]; 
 		_legBase setVariable ["Locality", 0]; 
-		if (_scarab_legs_force_server) then {
-			_legBase setVariable ["Locality", 2]; 
-		};
 		private _legTarget = "Land_HelipadEmpty_F" createvehicle [0, 0, 0];
 		_legTarget setVariable ["destroyed", false]; 
 		private _legTargetPos = _legBase modelToWorldWorld [0, 3 * _scarab_total_leg_length, 3 * _scarab_total_leg_length]; 
@@ -252,8 +291,12 @@ _legGroup = [_legs#0, _legs#1, _legs#2, _legs#3];
 
 _core setVariable ["scarab_legGroup", _legGroup]; 
 _core setVariable ["legs_base", _legs]; 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 [_tractor, _core] spawn { 
 	params ["_tractor", "_core"]; 
 	waitUntil {sleep 1; time > 5}; 
@@ -296,8 +339,8 @@ if (_scarab_orbital_drop) then {
 	[_effect_source, _scarab_walk_height] Spawn {
 		params ["_effect_source", "_scarab_walk_height"];
 		while {((getPosATL _effect_source) select 2) > _scarab_walk_height +  100} do {
-			[_effect_source, ["Scarab_Thruster", 4500]] remoteExec ["say3D", 0];
-			uiSleep 7;
+			[_effect_source, ["Scarab_Thruster", 3500]] remoteExec ["say3D", 0];
+			uiSleep 25;
 		};
 	};
 
@@ -315,11 +358,10 @@ if (_scarab_orbital_drop) then {
 		[_x, 0.05] remoteExec ["setDropInterval", 0];
 	} forEach [_particle_emitter_5, _particle_emitter_6, _particle_emitter_7, _particle_emitter_8];
 
-	waitUntil { uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height +  100};
+	waitUntil { uiSleep 0.025; ((getPosATL _core) select 2) < _scarab_walk_height +  100};
 
 	[2] remoteExec ["BIS_fnc_earthquake", 0];
 
-	waitUntil { uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height +  85};
 	_pos = getPosATL _core;
 	_pos set [2, 0];
 	_wave_dirt = "#particlesource" createVehicle _pos;
@@ -337,20 +379,20 @@ if (_scarab_orbital_drop) then {
 
 	[_effect_source, ["Initial_Impact", 8500]] remoteExec ["say3D", 0];
 
-	waitUntil {uiSleep 0.5; ((getPosATL _core) select 2) < _scarab_walk_height};
+	waitUntil { uiSleep 0.025; ((getPosATL _core) select 2) < _scarab_walk_height};
 
 	{ deleteVehicle _x; } forEach [_particle_emitter_1, _particle_emitter_2, _particle_emitter_3, _particle_emitter_4, _particle_emitter_5, _particle_emitter_6, _particle_emitter_7, _particle_emitter_8];
 	
 	[_effect_source] spawn {
 		params ["_effect_source"];
-		uiSleep 3.5;
-		[_effect_source, ["After_Impact", 8500]] remoteExec ["say3D", 0];
-		uiSleep 30;
+		uiSleep 1;
+		[_effect_source, ["After_Impact", 4500]] remoteExec ["say3D", 0];
+		uiSleep 8;
 		deleteVehicle _effect_source;
 	};
 };
-private _handle = [{ 
-	params ["_args", "_handle"]; 
+private _Main_handle = [{ 
+	params ["_args", "_Main_handle"]; 
 	_args params 
 	[
 		"_core", 
@@ -385,7 +427,7 @@ private _handle = [{
 		_scarab_rear_leg_active_position
 	] call scarab_fnc_handleLegUpdate; 
 
-}, 0.0385 , [		
+}, 0.0325 , [		
 	_core, 
 	_scarab_num_segments, 
 	_scarab_walk_height, 
@@ -399,10 +441,12 @@ private _handle = [{
 	_scarab_rear_leg_neutral_position,
 	_scarab_rear_leg_active_position
 ]] call CBA_fnc_addPerFrameHandler; 
-_handles pushBack _handle; 
+_handles pushBack _Main_handle; 
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 missionNamespace setVariable ["scarabInProgress", false];
 
@@ -411,136 +455,200 @@ uiSleep 8;
 [_human, _core] Spawn {
 	params ["_human", "_core"];
 	while {alive _human} do {
-		[_core, ["Ambience", 2000]] remoteExec ["say3D", 0, false];
-		uiSleep 30;
+		_alarm = _core getVariable "Alarm";
+		if (isNil "_alarm") exitWith {};
+		if !(_alarm) then {
+			[_core, ["Ambience", 2500]] remoteExec ["say3D", 0, false];
+		};
+		uiSleep 120;
 	};
 };
 
-[_human, _core_embed] Spawn {
-	params ["_human", "_core_embed"];
+[_human, _core_embed, _core] Spawn {
+	params ["_human", "_core_embed", "_core"];
 	while {alive _human} do {
-		[_core_embed, ["Horn", 4500]] remoteExec ["say3D", 0, false];\
+		_alarm = _core getVariable "Alarm";
+		if (isNil "_alarm") exitWith {};
+		if !(_alarm) then {
+			[_core_embed, ["Horn", 2500]] remoteExec ["say3D", 0, false];
+		};
 		_time = [120, 280] call BIS_fnc_randomInt;
 		uiSleep _time;
 	};
 };
 
-while {alive _human} do {
+_alarm_initial_obj = createVehicle ["Land_HelipadEmpty_F", [0, 0, 0], [], 0, "NONE"]; 
+_alarm_initial_obj attachTo [_core, [0,0,0]];
 
-	private _objects = _core getVariable "scarab_objects";  
-	private _objectsMissing = _objects find objNull != -1;
-	_legs_destroyed = _core getVariable "legs_destroyed"; 
-	_override = false;
+[_core, _scarab_point_object, _leg_arrays, _scarab_version, _core_damage_obj_shield, _core_damage_obj, _alarm_initial_obj, _core_embed] spawn {
+	params ["_core", "_scarab_point_object", "_leg_arrays", "_scarab_version", "_core_damage_obj_shield", "_core_damage_obj", "_alarm_initial_obj", "_core_embed"]; 
+	while {(alive _core_damage_obj)} do {
 
-	for "_i" from 0 to ((count _leg_arrays) - 1) do {
-		_core setVariable ["leg_object_destroyed", false];
-		_leg_array = _leg_arrays select _i; 
-		_leg_base = _leg_array select 1;
-		_health = _leg_base getVariable "Leg_Health";
-		_destroyed = _leg_base getVariable "destroyed";
-		//systemChat str _health;
-		if (_health < 0.1 && !_destroyed) then {
-			_core setVariable ["leg_object_destroyed", true];
-			_leg_base setVariable ["destroyed", true];
-		};
-		_check_leg_destroyed = _core getVariable "leg_object_destroyed";
-		if (_check_leg_destroyed) then {
-			[_core, _scarab_point_object, _leg_array, _scarab_version] spawn {
-				params ["_core", "_scarab_point_object", "_leg_array", "_scarab_version"]; 
-				{
-					if (typename _x  != typename 0) then {
-						if (typeOf _x isEqualTo _scarab_point_object) then {
-							_bomb = "ammo_Bomb_SDB" createvehicle getPosATL _x;
-							triggerAmmo _bomb;
-							uiSleep 0.125;
-						};
+		private _objects = _core getVariable "scarab_objects";  
+		private _objectsMissing = _objects find objNull != -1;
+		_legs_destroyed = _core getVariable "legs_destroyed"; 
+		_override = false;
 
-						if (typeOf _x isEqualTo "Land_HelipadEmpty_F") then {
-							_x setVariable ["on_fire", true];
-
-							private["_pos","_fire","_smoke"];
-							private["_light","_brightness","_color","_ambient","_intensity","_attenuation"];
-
-							_pos = getPosASL _x;
-
-							_fire = "BigDestructionFire";
-							_brightness	= 4.0;
-							_intensity = 1600;
-							_attenuation = [0,0,0,1.6];
-							_color = [0.62,0.12,0.94];
-							_ambient = [1,0.3,0];
-
-							if (!isNil "_fire") then {
-								_eFire = "#particlesource" createVehicle _pos;
-								_eFire attachTo [_x, [0, 0, 0]];
-								_eFire setParticleClass _fire;
-								_eFire setPosATL _pos;
+		for "_i" from 0 to ((count _leg_arrays) - 1) do {
+			_core setVariable ["leg_object_destroyed", false];
+			_leg_array = _leg_arrays select _i; 
+			_leg_base = _leg_array select 1;
+			_health = _leg_base getVariable "Leg_Health";
+			_destroyed = _leg_base getVariable "destroyed";
+			//systemChat str _health;
+			if (_health < 0.1 && !_destroyed) then {
+				_core setVariable ["leg_object_destroyed", true];
+				_leg_base setVariable ["destroyed", true];
+			};
+			_check_leg_destroyed = _core getVariable "leg_object_destroyed";
+			if (_check_leg_destroyed) then {
+				[_core_embed, ["Horn", 2500]] remoteExec ["say3D", 0, false];
+					{
+						if (typename _x  != typename 0) then {
+							if (typeOf _x isEqualTo _scarab_point_object) then {
+								_bomb = "ammo_Bomb_SDB" createvehicle getPosATL _x;
+								triggerAmmo _bomb;
+								uiSleep 0.125;
 							};
 
-							_smoke = createVehicle ["test_EmptyObjectForSmoke", getPos _X, [], 0, "NONE"];
-							_smoke attachTo [_x, [0,0,0]];
+							if (typeOf _x isEqualTo "Land_HelipadEmpty_F") then {
+								_x setVariable ["on_fire", true];
 
-							//create lightsource
-							_pos   = [_pos select 0,_pos select 1,(_pos select 2)+1];
-							_light = createVehicle ["#lightpoint", _pos, [], 0, "CAN_COLLIDE"];
-							_light attachTo [_x, [0, 0, 0]];
-							[_light, _brightness] remoteExec ["setLightBrightness", 0];
-							[_light, _color] remoteExec ["setLightColor", 0];
-							[_light, _ambient] remoteExec ["setLightAmbient", 0];
-							[_light, _intensity] remoteExec ["setLightIntensity", 0];
-							[_light, _attenuation] remoteExec ["setLightAttenuation", 0];
-							[_light, false] remoteExec ["setLightDayLight", 0];
+								private["_pos","_fire","_smoke"];
+								private["_light","_brightness","_color","_ambient","_intensity","_attenuation"];
+
+								_pos = getPosASL _x;
+
+								_fire = "BigDestructionFire";
+								_brightness	= 4.0;
+								_intensity = 1600;
+								_attenuation = [0,0,0,1.6];
+								_color = [0.62,0.12,0.94];
+								_ambient = [1,0.3,0];
+
+								if (!isNil "_fire") then {
+									_eFire = "#particlesource" createVehicle _pos;
+									_eFire attachTo [_x, [0, 0, 0]];
+									_eFire setParticleClass _fire;
+									_eFire setPosATL _pos;
+								};
+
+								_smoke = createVehicle ["test_EmptyObjectForSmoke", getPos _X, [], 0, "NONE"];
+								_smoke attachTo [_x, [0,0,0]];
+
+								//create lightsource
+								_pos   = [_pos select 0,_pos select 1,(_pos select 2)+1];
+								_light = createVehicle ["#lightpoint", _pos, [], 0, "CAN_COLLIDE"];
+								_light attachTo [_x, [0, 0, 0]];
+								[_light, _brightness] remoteExec ["setLightBrightness", 0];
+								[_light, _color] remoteExec ["setLightColor", 0];
+								[_light, _ambient] remoteExec ["setLightAmbient", 0];
+								[_light, _intensity] remoteExec ["setLightIntensity", 0];
+								[_light, _attenuation] remoteExec ["setLightAttenuation", 0];
+								[_light, false] remoteExec ["setLightDayLight", 0];
+							};
+						};
+						//_x removeAllEventHandlers "HitPart";
+					} forEach _leg_array;
+					(_leg_array select 0) call CBA_fnc_removePerFrameHandler;
+					{
+						if (typename _x  != typename 0) then {
+							deleteVehicleCrew _x;
+							if !(typeOf _x isEqualTo "Land_HelipadEmpty_F") then {
+								if (typeOf _x isEqualTo "Land_PowerGenerator_F" || !alive _x) then { deleteVehicle _x; };
+								if (typeOf _x isEqualTo "Land_Cargo20_grey_F" || typeOf _x isEqualTo "Land_Cargo40_grey_F") then { 
+									detach _x; 
+									_x enableSimulationGlobal true; 
+									_attached_obj_array = attachedObjects _x; 
+									[_x, "HitPart"] remoteExec ["removeAllEventHandlers", 0];
+									{ [_x, "HitPart"] remoteExec ["removeAllEventHandlers", 0]; } forEach _attached_obj_array;
+								} else { deletevehicle _x; };
+							};
+							if (!alive _x) then { deletevehicle _x; };
+						};
+					} forEach _leg_array;
+					_legs_destroyed = _core getVariable "legs_destroyed";
+					_legs_destroyed = _legs_destroyed + 1;
+					_core setVariable ["legs_destroyed", _legs_destroyed];
+					if (_scarab_version isEqualTo "T-74B") then {
+						_core setVariable ["Walking_Phase", "Injured"];
+						_core setVariable ["scarab_Legs_invincible", true];
+						_core setVariable ["Alarm", true];
+						_core_damage_obj_shield hideObjectGlobal true;
+						_core_damage_obj allowDamage true;
+						[_core, _alarm_initial_obj] Spawn {
+							params ["_core", "_alarm_initial_obj"];
+							_alarm_bool = _core getVariable "Alarm";
+							while {_alarm_bool} do {
+								[_alarm_initial_obj, ["Alarm", 2500]] remoteExec ["say3D", 0, false];
+								uiSleep 1.85;
+								_alarm_bool = _core getVariable "Alarm";
+								if (isNil "_alarm_bool" || isNil "_alarm_initial_obj") exitWith {};
+							};
+						};
+						[_core, _core_damage_obj, _core_damage_obj_shield] Spawn {
+							params ["_core", "_core_damage_obj", "_core_damage_obj_shield"];
+							uiSleep 125;
+							if (alive _core_damage_obj) then {
+								[_core, ["Ambience", 2500]] remoteExec ["say3D", 0, false];
+								_core setVariable ["Alarm", false];
+								_core_damage_obj allowDamage false;
+								_core setVariable ["Walking_Phase", "Rise Up"];
+								_core setVariable ["scarab_Legs_invincible", false];
+								_core_damage_obj_shield hideObjectGlobal false;
+							};
 						};
 					};
-					//_x removeAllEventHandlers "HitPart";
-				} forEach _leg_array;
-				(_leg_array select 0) call CBA_fnc_removePerFrameHandler;
-				{
-					if (typename _x  != typename 0) then {
-						deleteVehicleCrew _x;
-						if !(typeOf _x isEqualTo "Land_HelipadEmpty_F") then {
-							if (typeOf _x isEqualTo "Land_PowerGenerator_F" || !alive _x) then { deleteVehicle _x; };
-							if (typeOf _x isEqualTo "Land_Cargo20_grey_F" || typeOf _x isEqualTo "Land_Cargo40_grey_F") then { 
-								detach _x; 
-								_x enableSimulationGlobal true; 
-								_attached_obj_array = attachedObjects _x; 
-								_x removeAllEventHandlers "HitPart";
-								{ _x removeAllEventHandlers "HitPart"; } forEach _attached_obj_array;
-							} else { deletevehicle _x; };
-						};
-						if (!alive _x) then { deletevehicle _x; };
-					};
-				} forEach _leg_array;
-				_legs_destroyed = _core getVariable "legs_destroyed";
-				_legs_destroyed = _legs_destroyed + 1;
-				_core setVariable ["legs_destroyed", _legs_destroyed];
-				if (_scarab_version isEqualTo "T-74B") then {
-					_core setVariable ["Walking_Phase", "Injured"];
-					_core setVariable ["scarab_Legs_invincible", true];
-					[_core] Spawn {
-						params ["_core"];
-						uiSleep 45;
-						if (true) then {
-							_core setVariable ["Walking_Phase", "Rise Up"];
-							_core setVariable ["scarab_Legs_invincible", false];
-						};
-					}
-				};
+				_core setVariable ["leg_object_destroyed", false];
 			};
-			_core setVariable ["leg_object_destroyed", false];
+		}; 
+
+		uiSleep 2.5;
+
+		if (_legs_destroyed >= (count _leg_arrays * 0.5)) then {
+			_core_damage_obj setDamage 1;
 		};
-	}; 
 
-	if (_legs_destroyed >= (count _leg_arrays * 0.5)) then { deleteVehicle _tractor; _tractor deleteVehicleCrew _human; };
-
-	uiSleep 6.85;
+	};
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+waitUntil {uiSleep 0.5; (!(alive _core_damage_obj))};
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+_core setVariable ["Walking_Phase", "Injured"];
+_core setVariable ["scarab_Legs_invincible", true];
+_core setVariable ["Alarm", false];
+
+deleteVehicle _core_damage_obj;
+
+[_core_damage_obj_pretty, ["Core_explosion", 1500]] remoteExec ["say3D", 0, false];
+
+uiSleep 2;
+
+_core setVariable ["Alarm", true];
+
+_alarm = _core getVariable "Alarm";
+_alarm_obj = createVehicle ["Land_HelipadEmpty_F", [0, 0, 0], [], 0, "NONE"]; 
+_alarm_obj attachTo [_core, [0,0,0]];
+[_core, _alarm_obj] Spawn {
+	params ["_core", "_alarm_obj"];
+	_alarm_bool = _core getVariable "Alarm";
+	while {_alarm_bool} do {
+		[_alarm_obj, ["Alarm", 2500]] remoteExec ["say3D", 0, false];
+		uiSleep 0.65;
+		_alarm_bool = _core getVariable "Alarm";
+		if (isNil "_alarm_bool" || isNil "_alarm_obj") exitWith {};
+	};
+};
+
+_core_damage_obj_pretty setObjectTextureGlobal [0, "Scarab_Main\Scarab_Textures\Core_Critical.paa"];
+
+uiSleep 16.5;
+
+_Main_handle call CBA_fnc_removePerFrameHandler;
 _core enableSimulationGlobal false;
-private _handles = _core getVariable "scarab_handles"; 
+
 [_core, _scarab_num_of_legs] spawn {
 	params ["_core", "_scarab_num_of_legs"];
 	_leg_array_main = _core getVariable "legs_base"; 
@@ -592,12 +700,8 @@ private _handles = _core getVariable "scarab_handles";
 		uiSleep 0.65; 
 	} forEach _leg_array_main;
 };
-_handle call CBA_fnc_removePerFrameHandler;
-_vel = velocity _core;
-_speed = 32;
-_dir = getDir _core;
-_core setVelocity [(_vel select 0) + (sin _dir * _speed), (_vel select 1) + (cos _dir * _speed), (_vel select 2)];
-[_core, ["Horn", 4500]] remoteExec ["say3D", 0, false];
+
+[_core_embed, ["Horn", 2500]] remoteExec ["say3D", 0, false];
 uiSleep 6.15;
 { 
 	if (typeOf _x isEqualTo _scarab_point_object) then {
@@ -609,23 +713,19 @@ uiSleep 6.15;
 		deleteVehicle _x;
 	}; 
 	deleteVehicleCrew _x;
-	_x removeAllEventHandlers "HitPart";
+	[_x, "HitPart"] remoteExec ["removeAllEventHandlers", 0];
 	if (typeOf _x isEqualTo "Land_PowerGenerator_F" || !alive _x) then { deleteVehicle _x; };
 	if !(typeOf _x isEqualTo "Land_HelipadEmpty_F") then {
 		if (typeOf _x isEqualTo "Land_Cargo20_grey_F" || typeOf _x isEqualTo "Land_Cargo40_grey_F") then { 
 			detach _x; 
 			_x enableSimulationGlobal true; 
 			_attached_obj_array = attachedObjects _x; 
-			_x removeAllEventHandlers "HitPart";
-			{ _x removeAllEventHandlers "HitPart"; } forEach _attached_obj_array;
+			[_x, "HitPart"] remoteExec ["removeAllEventHandlers", 0];
+			{ [_x, "HitPart"] remoteExec ["removeAllEventHandlers", 0]; } forEach _attached_obj_array;
 		} else { deletevehicle _x; };
 	};
 } forEach _objects;
-if (_scarab_weapons_enabled) then {
-	{
-		_x setDamage 1;
-	} forEach _turret_array;
-};
+{_x setDamage 1;} forEach _Turret_array;
 {  
 	_x call CBA_fnc_removePerFrameHandler; 
 } forEach _handles;

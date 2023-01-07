@@ -2,21 +2,27 @@ if (!isServer || time < 5) exitWith {};
 params ["_target", "_shooter", "_projectile", "_position", "_velocity", "_selection", "_ammo", "_vector", "_radius", "_surfaceType", "_isDirect"];
 
 _leg_base_intermediary = nearestObject [_target, "Land_PowerGenerator_F"];
+if (isNil "_leg_base_intermediary") exitWith {};
 _leg_base = _leg_base_intermediary getVariable "Leg_Base";
+if (isNil "_leg_base") exitWith {};
 _leg_health = _leg_base getVariable "Leg_Health";
+if (isNil "_leg_health") exitWith {};
 _Hit_In_Progress = _target getVariable "Hit_In_Progress";
+if (isNil "_Hit_In_Progress") exitWith {};
 _core = attachedTo _leg_base;
+if (isNil "_core") exitWith {};
 _legs_invincible = _core getVariable "scarab_Legs_invincible";
+if (isNil "_legs_invincible") exitWith {};
 
 //hintSilent str _ammo;
 
-if (_leg_health < 0.1 || (((_ammo select 0) < 125) && (_ammo select 3) < 1.15) || !_isDirect || _Hit_In_Progress || _legs_invincible) exitWith {};
+if (_leg_health < 0.1 || (((_ammo select 0) < 125) && (_ammo select 3) < 1.15) || !_isDirect || _Hit_In_Progress || _legs_invincible || ((_ammo select 4) isEqualTo "Superheated_Plasma")) exitWith {};
 
 _target setVariable ["Hit_In_Progress", true]; 
 
-if ((_ammo select 0) >= 265) then {
+if ((_ammo select 0) >= 325) then {
 
-	_Damage_texture_obj = "UserTexture10m_F" createVehicle [0,0,0];
+	_Damage_texture_obj = "UserTexture_1x2_F" createVehicle [0,0,0];
 	_Damage_texture_selection = selectRandom ["Scarab_Main\Scarab_Textures\Expo_Purple.paa", "Scarab_Main\Scarab_Textures\Expo_Blue.paa", "Scarab_Main\Scarab_Textures\Expo_Grey.paa"];
 	_Damage_texture_obj setObjectTextureGlobal [0, _Damage_texture_selection];
 	_Damage_texture_obj enableSimulationGlobal false;
@@ -31,8 +37,6 @@ if ((_ammo select 0) >= 265) then {
 		_x setPosASL _position;
  		[_x, _target] call BIS_fnc_attachToRelative;
 	} forEach [_particle_emitter_0, _particle_emitter_1, _particle_emitter_2, _Damage_texture_obj];
-
-	_Damage_texture_obj setObjectScale 0.235;
 
 	_random_Number = [0,1] call BIS_fnc_randomInt;
 	switch (_random_Number) do {
@@ -74,8 +78,8 @@ if ((_ammo select 0) >= 265) then {
 	};
 
 } else {
-	if ((_ammo select 0) >= 148) then {
-		_Damage_texture_obj = "UserTexture1m_F" createVehicle [0,0,0];
+	if ((_ammo select 0) >= 200) then {
+		_Damage_texture_obj = "UserTexture_1x2_F" createVehicle [0,0,0];
 		_Damage_texture_selection = selectRandom ["Scarab_Main\Scarab_Textures\GP_Blue.paa", "Scarab_Main\Scarab_Textures\GP_Purple.paa"];
 		_Damage_texture_obj setObjectTextureGlobal [0, _Damage_texture_selection];
 		_Damage_texture_obj enableSimulationGlobal false;
@@ -108,7 +112,7 @@ if ((_ammo select 0) >= 265) then {
 		_leg_health = _leg_health - 0.2;
 		_leg_base setVariable ["Leg_Health", _leg_health]; 
 	} else {
-		_leg_health = _leg_health - 0.015;
+		_leg_health = _leg_health - 0.005;
 		_leg_base setVariable ["Leg_Health", _leg_health]; 
 	}
 };

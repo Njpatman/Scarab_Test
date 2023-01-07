@@ -31,7 +31,6 @@ if !(_scarab_legs_invincible) then {
 		_pointobj_dmg attachTo [_x,[0,0,0]]; 
 		_pointobj_dmg setVariable ["Leg_Base", _base];
 		_pointobj_dmg enableSimulationGlobal false;
-		_pointobj_dmg setObjectScale 0.05;
 		_points_dmg pushBack _pointobj_dmg;
 	} forEach _points;
 };
@@ -54,18 +53,27 @@ _AI_target_obj_array = [];
 			{
 				_AI_target_obj = _x createVehicle [0,0,0];
 				_AI_target_obj allowCrewInImmobile [true, true];
-				switch (_e) do {
-					case 0: {_AI_target_attach_array = [0,-1.45,-1];};
-					case 1: {_AI_target_attach_array = [0,1.45,-1];};
+				if (_x isEqualTo "CBA_B_InvisibleTargetVehicle" || _x isEqualTo "CBA_O_InvisibleTargetVehicle" || _x isEqualTo "CBA_I_InvisibleTargetVehicle") then {
+					switch (_e) do {
+						case 0: {_AI_target_attach_array = [0,-1.45,-1];};
+						case 1: {_AI_target_attach_array = [0,1.45,-1];};
+					};
+				} else{
+					switch (_e) do {
+						case 0: {_AI_target_attach_array = [2,-1.45,-1.25];};
+						case 1: {_AI_target_attach_array = [2,1.45,-1.25];};
+					};
 				};
 				_AI_target_obj attachTo [_obj, _AI_target_attach_array];
 				_AI_target_obj_array pushBack _AI_target_obj;
 				_AI_target_obj allowDamage false;
 				_AI_target_obj enableSimulationGlobal true;
-				_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
+				_man = _grp createUnit ["B_UAV_AI_F", [0,0,0], [], 0, "CARGO"];
 				waitUntil {!isNull _man};
 				_man moveInAny _AI_target_obj;
-				uiSleep 0.185;
+				[_man] joinSilent _grp;
+				uiSleep 0.285;
+				[_man] joinSilent _grp;
 				{ 
 					_x removeCuratorEditableObjects [[_AI_target_obj], true];
 				} forEach (allCurators); 
@@ -80,15 +88,21 @@ _AI_target_obj_array = [];
 		{
 			_AI_target_obj = _x createVehicle [0,0,0];
 			_AI_target_obj allowCrewInImmobile [true, true];
-			_AI_target_attach_array = [0,0,4.65];
+			if (_x isEqualTo "CBA_B_InvisibleTargetVehicle" || _x isEqualTo "CBA_O_InvisibleTargetVehicle" || _x isEqualTo "CBA_I_InvisibleTargetVehicle") then {
+				_AI_target_attach_array = [3.5,0,4.85];
+			} else{
+				_AI_target_attach_array = [0,0,4.65];
+			};
 			_AI_target_obj attachTo [_obj, _AI_target_attach_array];
 			_AI_target_obj_array pushBack _AI_target_obj;
 			_AI_target_obj allowDamage false;
 			_AI_target_obj enableSimulationGlobal true;
-			_man = _grp createUnit [(_AI_targets select 2), [0,0,0], [], 0, "CARGO"];
+			_man = _grp createUnit ["B_UAV_AI_F", [0,0,0], [], 0, "CARGO"];
 			waitUntil {!isNull _man};
 			_man moveInAny _AI_target_obj;
-			uiSleep 0.185;
+			[_man] joinSilent _grp;
+			uiSleep 0.285;
+			[_man] joinSilent _grp;
 			{ 
 				_x removeCuratorEditableObjects [[_AI_target_obj, _man], true];
 			} forEach (allCurators); 
@@ -103,7 +117,6 @@ if !(_scarab_legs_invincible) then {
 	_pointobj_dmg attachTo [_lastPoint,[0,0,0]]; 
 	_pointobj_dmg setVariable ["Leg_Base", _base];
 	_pointobj_dmg enableSimulationGlobal false;
-	_pointobj_dmg setObjectScale 0.05;
 	_points_dmg pushBack _pointobj_dmg;
 };	
 _lastPoint setVariable ["destroyed", false]; 
@@ -132,5 +145,5 @@ _handle = [{
 	private _points = _base getVariable "Scarab_points"; 
 	private _target = _base getVariable "Scarab_target"; 
 	[_base, ASLtoAGL (getPosASL _target), _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations] call Scarab_fnc_moveLeg; 
-}, 0.04, [_base, _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations]] call CBA_fnc_addPerFrameHandler; 
+}, 0.0315, [_base, _scarab_point_max_rot_speed, _scarab_arm_length, _scarab_point_max_angle, _scarab_total_leg_length, _scarab_minimum_distance, _scarab_num_segments, _scarab_max_iterations]] call CBA_fnc_addPerFrameHandler; 
 _base setVariable ["Scarab_handle", _handle]; 

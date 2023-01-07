@@ -30,7 +30,7 @@ switch (_Walking_Phase) do {
 	};
 	case "Injured": { 
 		_variation = _variation - 0.185;
-		if (((getPosATL _core) select 2) < 2.15) then {
+		if (((getPosATL _core) select 2) < 3.065) then {
 			_core setVariable ["Walking_Phase", "Do Nothing"];
 		};
 	};
